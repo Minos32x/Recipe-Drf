@@ -1,10 +1,15 @@
+# Defining the docker compose version '3' is the latest version
 version: "3"
+# Defining the services list needed to run the our application
 services:
+  #  First one here is our own custom name of the service can have multiple service names here each have it's own workflow
   application:
     build:
       context: .
+  # Port mapping
     ports:
       - "8000:8009"
+  # real time directory updates into our docker image
     volumes:
       - ./application:/opt/application
     command: >
