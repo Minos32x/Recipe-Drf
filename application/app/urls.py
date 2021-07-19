@@ -19,3 +19,12 @@ from django.urls import path
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
+
+# This Changes the page title it self in the browser
+admin.site.site_title = 'Recipe Administration'
+
+# This Changes the browser index title & main title in administration
+admin.site.index_title = ''
+
+# This Changes the login form title header & navbar title
+admin.site.site_header = 'Administration'
