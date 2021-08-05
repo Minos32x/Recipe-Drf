@@ -12,8 +12,7 @@ class AdminUser(BaseUserAdmin):
 
         (None, {'fields': ('email', 'password')}),
         (_('Personal info'),
-         {'fields':
-            ('first_name', 'last_name', 'mobile', 'country', 'gender', 'land_line', 'career')
+         {'fields': ('first_name', 'last_name', 'mobile', 'country', 'gender', 'land_line', 'career')
           }
          ),
         (_('Permissions'), {
@@ -27,6 +26,5 @@ class AdminUser(BaseUserAdmin):
         (None, {
             'classes': ('wide',),
             'fields': ('email', 'password', 'password2')
-        }
-         ),
+        }),
     )

@@ -9,6 +9,8 @@ from django.contrib.auth import get_user_model
 
 class CreateUserView(CreateAPIView):
     serializer_class = UserSerializer
+    permission_classes = []
+    authentication_classes = []
 
 
 class RudManagerUserView(RetrieveUpdateAPIView):

@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'core.apps.CoreConfig',
-    'user'
+    'user',
+    'recipe'
 ]
 
 MIDDLEWARE = [
@@ -82,6 +83,9 @@ DATABASES = {
         'PASSWORD': 'postgresspass',
         'HOST': '127.0.0.1',
         'PORT': '5433',
+        'TEST': {
+            'name': 'test_recipe_db'
+        }
     }
 }
 
@@ -123,3 +127,8 @@ AUTH_USER_MODEL = 'core.User'
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework.authentication.TokenAuthentication'],
+    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated']
+}

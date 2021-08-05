@@ -10,6 +10,9 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'min_length': 5, 'write_only': True}}
 
     def create(self, validated_data):
+        """
+        Override the default behaviour of the serializer create and direct it to our custom create_user function
+        """
         return get_user_model().objects.create_user(**validated_data)
 
     def update(self, instance, validated_data):
@@ -23,7 +26,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class AuthTokenSerializer(serializers.Serializer):
-    """Auth token serializer"""
+    """Auth token serializer
+    Override the default behaviour to add our custom email"""
 
     email = serializers.CharField()
     password = serializers.CharField(
@@ -37,13 +41,11 @@ class AuthTokenSerializer(serializers.Serializer):
         password = attrs.get('password')
 
         if email and password:
-            user = authenticate(
-                request=self.context.get('request'),
-                username=email, password=password)
+            user = authenticate(request=self.context.get('request'), username=email, password=password)
 
             # The authenticate call simply returns None for is_active=False
-            # users. (Assuming the default ModelBackend authentication
-            # backend.)
+            # users. (Assuming the default ModelBackend authentication backend.)
+
             if not user:
                 msg = _('Unable to log in with provided credentials.')
                 raise serializers.ValidationError(msg, code='authorization')
