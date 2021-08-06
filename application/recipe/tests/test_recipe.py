@@ -18,7 +18,7 @@ class TestRecipeModel(TestCase):
 
     def _get_recipe_data(self):
         return {
-            'price': 5.0, 'title': 'Pizza', 'user': self.user, 'time_in_minutes': 5
+            'price': 5.00, 'title': 'Pizza', 'user': self.user, 'time_in_minutes': 5
         }
 
     def setUp(self) -> None:
@@ -29,3 +29,4 @@ class TestRecipeModel(TestCase):
     def test_recipe_str(self):
         recipe = Recipe.objects.create(**self._get_recipe_data())
         self.assertEqual(str(recipe.title), recipe.title)
+ 
