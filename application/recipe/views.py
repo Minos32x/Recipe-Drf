@@ -1,12 +1,12 @@
-from django.shortcuts import render
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from .serializers import (TagSerializer, IngredientSerializer)
-from .models import (Tag, Ingredient)
 from rest_framework.generics import (CreateAPIView, UpdateAPIView, RetrieveAPIView, ListAPIView, DestroyAPIView)
+from rest_framework.viewsets import ModelViewSet
+from .serializers import (TagSerializer, IngredientSerializer, RecipeSerializer, RecipeDetailSerializer)
+from .models import (Tag, Ingredient, Recipe)
 
 
 @api_view(['GET'])
@@ -72,11 +72,11 @@ def update_tag(request):
 
 
 @api_view(['GET'])
-def view_tag(request):
+def view_tag(request,pk):
     print("INSIDE VIEW TAG")
     result = {'data': '-Empty-', 'status': status.HTTP_204_NO_CONTENT}
     try:
-        serializer = TagSerializer(instance=Tag.objects.get(pk=request.data.get('id')))
+        serializer = TagSerializer(instance=Tag.objects.get(pk=pk))
         if serializer:
             result['data'] = serializer.data
             result['status'] = status.HTTP_200_OK
@@ -150,3 +150,24 @@ class IngredientUpdate(UpdateAPIView):
 class IngredientDestroy(UpdateAPIView):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
+
+
+class RecipeViewSet(ModelViewSet):
+    serializer_class = RecipeSerializer
+    queryset = Recipe.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+    def get_serializer_class(self):
+        "Override the default serializer to return the specific serializer we want"
+
+        if self.action == 'retrieve':
+            return RecipeDetailSerializer
+        # else return the serializer based on the actions
+        return self.serializer_class
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

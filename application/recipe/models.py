@@ -20,11 +20,13 @@ class Ingredient(models.Model):
     class Meta:
         verbose_name = _('Ingredient')
         verbose_name_plural = _('Ingredients')
-
         ordering = ('name',)
 
     name = models.CharField(_('Name'), max_length=255)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
 
 
 class Recipe(models.Model):
