@@ -81,7 +81,7 @@ DATABASES = {
         'NAME': 'django_postgres',
         'USER': 'django_postgres',
         'PASSWORD': 'postgresspass',
-        'HOST': '127.0.0.1',
+        'HOST': '172.17.0.1',  # assign the postgres docker ip
         'PORT': '5433',
         'TEST': {
             'name': 'test_recipe_db'
@@ -130,8 +130,8 @@ STATIC_URL = '/static/'
 
 MEDIA_URL = '/media/'
 
-STATIC_ROOT = '/vol/web/static'
-MEDIA_ROOT = '/vol/web/media'
+STATIC_ROOT = '/tmp/web/static'
+MEDIA_ROOT = '/tmp/web/media'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework.authentication.TokenAuthentication'],

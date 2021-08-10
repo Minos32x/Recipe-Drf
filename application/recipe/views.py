@@ -1,11 +1,12 @@
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes, action
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import (CreateAPIView, UpdateAPIView, RetrieveAPIView, ListAPIView, DestroyAPIView)
 from rest_framework.viewsets import ModelViewSet
-from .serializers import (TagSerializer, IngredientSerializer, RecipeSerializer, RecipeDetailSerializer)
+from .serializers import (TagSerializer, IngredientSerializer, RecipeSerializer, RecipeDetailSerializer,
+                          RecipeImageSerializer)
 from .models import (Tag, Ingredient, Recipe)
 
 
@@ -72,7 +73,7 @@ def update_tag(request):
 
 
 @api_view(['GET'])
-def view_tag(request,pk):
+def view_tag(request, pk):
     print("INSIDE VIEW TAG")
     result = {'data': '-Empty-', 'status': status.HTTP_204_NO_CONTENT}
     try:
@@ -162,12 +163,40 @@ class RecipeViewSet(ModelViewSet):
         return self.queryset.filter(user=self.request.user)
 
     def get_serializer_class(self):
-        "Override the default serializer to return the specific serializer we want"
+        """
+        Override the default serializer to return the specific serializer we want
+        """
+
+        print("GETTING SERIALIZER CLASS FOR ACTION -> {}".format(self.action))
 
         if self.action == 'retrieve':
             return RecipeDetailSerializer
+        if self.action == 'upload_image':  # using the function name as the action
+            return RecipeImageSerializer
         # else return the serializer based on the actions
         return self.serializer_class
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    # Defining a custom action
+    @action(methods=['POST'], detail=True, url_path='upload-image')
+    def upload_image(self, request, pk=None):
+
+        """
+        Uploads an image to a recipe.
+        the name of the function is very important as it will be used in the get_serializer_classes
+        also it will be translated to the url name attribute as we are using the view-sets router
+        """
+
+        # get the recipe object
+        recipe = self.get_object()
+
+        # Update the Recipe object with the coming request data
+        serializer = self.get_serializer(instance=recipe, data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
